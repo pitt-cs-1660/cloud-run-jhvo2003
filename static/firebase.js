@@ -102,12 +102,6 @@ function toggle() {
  * ++++ ADD YOUR CODE BELOW ++++
  * === VOTE FUNCTION ===
  */
-
-/**
- * Sends the user's vote to the server.
- * @param team
- * @returns {Promise<void>}
- */
 async function vote(team) {
   console.log(`Submitting vote for ${team}...`);
   if (firebase.auth().currentUser || authDisabled()) {
@@ -116,11 +110,23 @@ async function vote(team) {
     // refresh the token and return a new one.
     try {
       const token = await createIdToken();
-
-      /*
-       * ++++ YOUR CODE HERE ++++
-       */
-      window.alert(`Not implemented yet!`);
+      const response = fetch("/", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${token}`
+        },
+        body: new URLSearchParams({
+          'team': team,
+        }),
+      }).then((response) => {
+        if (response.ok) {
+          window.location.reload();
+          window.alert("Vote Added!")
+        } else {
+          window.alert(`Vote failed`);
+        }
+      });
 
     } catch (err) {
       console.log(`Error when submitting vote: ${err}`);
